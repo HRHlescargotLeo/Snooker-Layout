@@ -18,7 +18,7 @@ body{margin:0}
 :root{
   --bg:#E9ECE6; --panel:#F6F7F3; --ink:#18201C; --muted:#56615B; --line:#CDD3CB;
   --accent:#2B63A8; --accent-ink:#FFFFFF; --btn:#FFFFFF; --btn-hover:#EEF2EC;
-  --tray:#DDE2DA;
+  --tray:#DDE2DA; --scrim:rgba(16,21,18,.45);
   --display:"Saira Semi Condensed","Arial Narrow",system-ui,sans-serif;
   --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -26,46 +26,63 @@ body{margin:0}
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#101512; --panel:#171E1A; --ink:#E3E8E3; --muted:#98A39C; --line:#2A342E;
-    --accent:#6FA3E0; --accent-ink:#0D1510; --btn:#1D2520; --btn-hover:#253029; --tray:#0B0F0D;
+    --accent:#6FA3E0; --accent-ink:#0D1510; --btn:#1D2520; --btn-hover:#253029; --tray:#0B0F0D; --scrim:rgba(0,0,0,.6);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#101512; --panel:#171E1A; --ink:#E3E8E3; --muted:#98A39C; --line:#2A342E;
-  --accent:#6FA3E0; --accent-ink:#0D1510; --btn:#1D2520; --btn-hover:#253029; --tray:#0B0F0D;
+  --accent:#6FA3E0; --accent-ink:#0D1510; --btn:#1D2520; --btn-hover:#253029; --tray:#0B0F0D; --scrim:rgba(0,0,0,.6);
 }
 html,body{background:var(--bg);color:var(--ink)}
 body{font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:20px 32px}
-.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
+
+/* ---- desktop / tablet layout ---- */
+.app{max-width:1280px;margin:0 auto;display:grid;gap:12px 16px;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-areas:"head tools2 tools" "share share share" "stage stage stage" "status status status" "tray tray tray" "specs specs specs";}
+@media (max-width:1100px){.app{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"head head" "tools tools2" "share share" "stage stage" "status status" "tray tray" "specs specs"}}
+.head{grid-area:head;align-self:end}
+.tools{grid-area:tools;display:flex;flex-wrap:wrap;gap:8px;align-self:end}
+.more{display:contents}
+.tools2{grid-area:tools2;display:flex;flex-wrap:wrap;gap:8px;align-self:end}
+#sharebox{grid-area:share}
+.specs-wrap{grid-area:specs}
+.stage{grid-area:stage;position:relative;display:flex;justify-content:center}
+.status{grid-area:status}
+.traybar{grid-area:tray}
+.sheet-head,.only-phone{display:none}
+.scrim{display:none}
+
 h1{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.2vw,34px);letter-spacing:.01em;margin:0;line-height:1.05;text-wrap:balance}
 .lede{margin:4px 0 0;color:var(--muted);max-width:62ch}
-.tools{display:flex;flex-wrap:wrap;gap:8px}
-button{font:600 14px/1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink);background:var(--btn);border:1px solid var(--line);border-radius:6px;padding:9px 12px;cursor:pointer}
+button{font:600 14px/1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink);background:var(--btn);border:1px solid var(--line);border-radius:6px;padding:9px 12px;cursor:pointer;touch-action:manipulation}
 button:hover{background:var(--btn-hover)}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button:disabled{opacity:.45;cursor:default}
 button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.stage{display:flex;justify-content:center}
-#table{display:block;width:100%;height:auto;max-height:82vh;touch-action:none;user-select:none;-webkit-user-select:none}
+button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+#table{display:block;width:100%;height:auto;max-height:82vh;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .ball{cursor:grab}
 .ball:focus{outline:none}
 .ball .ring{opacity:0;fill:none;stroke:#FFFFFF;stroke-width:4;stroke-dasharray:9 6;pointer-events:none}
 .ball.sel .ring,.ball:focus-visible .ring{opacity:1}
+.ball.snapped .ring{stroke-dasharray:none;stroke:#FFE58A;stroke-width:5}
 .ball.removing{opacity:.45}
 .dragging .ball{cursor:grabbing}
-.below{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
-@media (max-width:760px){.below{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+
+.bar{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;min-height:44px;box-sizing:border-box}
+.status{font-variant-numeric:tabular-nums}
+.status b{font-family:var(--display);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.status .dim{color:var(--muted)}
+.status .tag{background:var(--tray);border-radius:4px;padding:1px 7px;font-size:14px}
 .label{font:600 12px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
-#tray{display:flex;flex-wrap:wrap;gap:6px;min-height:40px;align-items:center;background:var(--tray);border-radius:6px;padding:6px 8px}
+#tray{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1;min-width:0}
 #tray .empty{color:var(--muted);font-size:14px}
-.chip{width:30px;height:30px;padding:0;border-radius:50%;border:none;touch-action:none;box-shadow:inset -3px -4px 6px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.4)}
+.chip{width:30px;height:30px;flex:none;padding:0;border-radius:50%;border:none;touch-action:none;box-shadow:inset -3px -4px 6px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.4)}
 .chip:hover{filter:brightness(1.08)}
-.readout{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;font-variant-numeric:tabular-nums;margin:0}
-.readout dt{color:var(--muted)}
-.readout dd{margin:0;font-weight:600}
 .hint{color:var(--muted);font-size:13.5px;margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .share-row{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:8px;align-items:center}
 .share-row label{font-size:14px;color:var(--muted)}
 .share-row input{font:14px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0;width:100%;box-sizing:border-box}
@@ -75,72 +92,131 @@ details{font-size:14px;color:var(--muted)}
 summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
 .specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 24px;margin:10px 0 0;padding:0;list-style:none;font-variant-numeric:tabular-nums}
 .specs b{color:var(--ink);font-weight:600}
+
+/* magnifier shown above the finger while dragging on a touch screen */
+.loupe{position:fixed;left:0;top:0;width:132px;height:132px;border-radius:50%;overflow:hidden;z-index:30;pointer-events:none;
+  border:3px solid #FFFFFF;box-shadow:0 6px 22px rgba(0,0,0,.45);background:#1B8540}
+.loupe svg{display:block;width:100%;height:100%}
+.loupe.snapped{border-color:#FFE58A}
+
+/* ---- phone layout: table fills the screen, controls docked at the bottom ---- */
+@media (max-width:700px), (max-height:520px) and (pointer:coarse){
+  html{height:100%;box-sizing:border-box}
+  body{height:100%;box-sizing:border-box;padding-block:8px;overflow:hidden}
+  .app{height:100%;gap:8px;grid-template-columns:minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) auto auto auto;
+    grid-template-areas:"stage" "status" "tray" "tools"}
+  .head,.hint.desk{display:none}
+  .status{height:58px;overflow:hidden;align-content:center}
+  .traybar.none{display:none}
+  .stage{min-height:0}
+  #table{position:absolute;inset:0;height:100%;max-height:none}
+  .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .tools button{padding:12px 4px;font-size:13px}
+  .only-phone{display:inline-block}
+  .desk-only{display:none}
+  .bar{padding:6px 10px;min-height:40px;gap:4px 12px;font-size:14px}
+  #tray{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .chip{width:32px;height:32px}
+  .traybar .label{display:none}
+  /* the More sheet */
+  .more{display:none;position:fixed;left:0;right:0;bottom:0;z-index:20;max-height:78%;overflow:auto;
+    background:var(--panel);border-top:1px solid var(--line);border-radius:14px 14px 0 0;
+    padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:14px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+  .sheet-open .more{display:flex}
+  .sheet-open .scrim{display:block;position:fixed;inset:0;z-index:19;background:var(--scrim)}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center}
+  .tools2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .tools2 button{padding:12px 4px;font-size:13px}
+  #sharebox{background:transparent;border:none;padding:0}
+  .specs-wrap details{color:var(--muted)}
+}
+/* phone held sideways: table on the left, controls in a column on the right */
+@media (max-height:520px) and (pointer:coarse) and (orientation:landscape){
+  body{padding-block:6px}
+  .app{grid-template-columns:minmax(0,1fr) 200px;grid-template-rows:minmax(0,1fr) auto auto auto;
+    grid-template-areas:"stage status" "stage tray" "stage tools" "stage ."}
+  .head{display:none}
+  .status{align-self:start;height:auto}
+  .tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Snooker Layout Board</h1>
-      <p class="lede">Drag the balls to recreate any position. The table, spots, D, balls and pocket jaws are all drawn to scale.</p>
+<div class="app" id="app">
+  <div class="head">
+    <h1>Snooker Layout Board</h1>
+    <p class="lede">Drag the balls to recreate any position. The table, spots, D, balls and pocket jaws are all drawn to scale.</p>
+  </div>
+
+  <div class="tools" role="toolbar" aria-label="Table controls">
+    <button id="undo" type="button" disabled>Undo</button>
+    <button id="snap" type="button" aria-pressed="true" title="Snap to spots, cushions and touching balls">Snap on</button>
+    <button id="reset" type="button" class="primary">Reset<span class="desk-only"> to break-off</span></button>
+    <button id="morebtn" type="button" class="only-phone" aria-expanded="false" aria-controls="more">More</button>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="more" id="more" role="region" aria-label="More options">
+    <div class="sheet-head">
+      <p class="label">Snooker Layout Board</p>
+      <button id="closemore" type="button">Close</button>
     </div>
-    <div class="tools" role="toolbar" aria-label="Table controls">
-      <button id="undo" type="button" disabled>Undo</button>
+    <div class="tools2" role="toolbar" aria-label="More table controls">
       <button id="noreds" type="button">Remove reds</button>
       <button id="rotate" type="button">Rotate view</button>
       <button id="share" type="button" aria-expanded="false" aria-controls="sharebox">Share layout</button>
-      <button id="reset" type="button" class="primary">Reset to break-off</button>
     </div>
-  </header>
 
-  <section class="card share" id="sharebox" hidden aria-labelledby="share-h">
-    <p class="label" id="share-h">Share this layout</p>
-    <div class="share-row">
-      <label for="sharelink" id="sharelink-label">Link</label>
-      <input id="sharelink" type="text" readonly spellcheck="false">
-      <button id="copylink" type="button">Copy</button>
-    </div>
-    <div class="share-row">
-      <label for="pastecode">Open a code</label>
-      <input id="pastecode" type="text" spellcheck="false" placeholder="Paste a layout code or link">
-      <button id="loadcode" type="button">Load</button>
-    </div>
-    <p class="hint" id="sharemsg" aria-live="polite">Anyone who opens the link sees exactly this position.</p>
-  </section>
-
-  <div class="stage"><svg id="table" role="application" aria-label="Snooker table, top-down view"></svg></div>
-
-  <div class="below">
-    <section class="card" aria-labelledby="sel-h">
-      <p class="label" id="sel-h">Selected ball</p>
-      <dl class="readout" id="readout"></dl>
-      <p class="hint">Drag a ball off the table to pot it. With a ball selected, arrow keys nudge it 1&nbsp;mm (Shift for 10&nbsp;mm) and Delete pots it.</p>
+    <section class="card share" id="sharebox" hidden aria-labelledby="share-h">
+      <p class="label" id="share-h">Share this layout</p>
+      <div class="share-row">
+        <label for="sharelink" id="sharelink-label">Link</label>
+        <input id="sharelink" type="text" readonly spellcheck="false">
+        <button id="copylink" type="button">Copy</button>
+      </div>
+      <div class="share-row">
+        <label for="pastecode">Open a code</label>
+        <input id="pastecode" type="text" spellcheck="false" placeholder="Paste a layout code or link">
+        <button id="loadcode" type="button">Load</button>
+      </div>
+      <p class="hint" id="sharemsg" aria-live="polite">Anyone who opens the link sees exactly this position.</p>
     </section>
-    <section class="card" aria-labelledby="tray-h">
-      <p class="label" id="tray-h">Off the table</p>
-      <div id="tray"></div>
-      <p class="hint">Tap a ball to put it back on its spot, or drag it onto the table.</p>
-    </section>
+
+    <div class="specs-wrap">
+      <details id="specs">
+        <summary>Dimensions used</summary>
+        <ul class="specs">
+          <li>Playing area: <b>3,569 × 1,778 mm</b> (11 ft 8½ in × 5 ft 10 in)</li>
+          <li>Balls: <b>52.5 mm</b> diameter</li>
+          <li>Baulk line: <b>737 mm</b> from the bottom cushion face</li>
+          <li>D: semicircle of <b>292 mm</b> radius on the baulk line</li>
+          <li>Brown, yellow, green: centre and ends of the D; yellow on the right from baulk</li>
+          <li>Blue: centre spot. Pink: midway between blue and top cushion</li>
+          <li>Black: <b>324 mm</b> from the top cushion face</li>
+          <li>Reds: apex as close behind the pink as possible without touching</li>
+          <li>Corner pockets: <b>89 mm</b> at the fall, jaws cut along the pocket diagonal</li>
+          <li>Middle pockets: <b>108 mm</b> at the fall, rounded jaws flaring to the nose</li>
+          <li>Cushion rubber: <b>50 mm</b> from nose to rail</li>
+        </ul>
+        <p class="hint" style="margin-top:10px">Keyboard: with a ball selected, arrow keys nudge it 1&nbsp;mm (Shift for 10&nbsp;mm), Delete takes it off the table, Ctrl+Z undoes.</p>
+      </details>
+    </div>
   </div>
 
-  <details>
-    <summary>Dimensions used</summary>
-    <ul class="specs">
-      <li>Playing area: <b>3,569 × 1,778 mm</b> (11 ft 8½ in × 5 ft 10 in)</li>
-      <li>Balls: <b>52.5 mm</b> diameter</li>
-      <li>Baulk line: <b>737 mm</b> from the bottom cushion face</li>
-      <li>D: semicircle of <b>292 mm</b> radius on the baulk line</li>
-      <li>Brown, yellow, green: centre and ends of the D; yellow on the right from baulk</li>
-      <li>Blue: centre spot. Pink: midway between blue and top cushion</li>
-      <li>Black: <b>324 mm</b> from the top cushion face</li>
-      <li>Reds: apex as close behind the pink as possible without touching</li>
-      <li>Corner pockets: <b>89 mm</b> at the fall, jaws cut along the pocket diagonal</li>
-      <li>Middle pockets: <b>108 mm</b> at the fall, rounded jaws flaring to the nose</li>
-      <li>Cushion rubber: <b>50 mm</b> from nose to rail</li>
-    </ul>
-  </details>
+  <div class="stage" id="stage"><svg id="table" role="application" aria-label="Snooker table, top-down view"></svg></div>
+
+  <div class="bar status" id="status" aria-live="polite"></div>
+
+  <div class="bar traybar">
+    <p class="label">Off the table</p>
+    <div id="tray"></div>
+    <p class="hint desk">Tap a ball to respot it, or drag it onto the table.</p>
+  </div>
 </div>
+
+<div class="loupe" id="loupe" hidden><svg id="loupesvg"><use href="#world"></use></svg></div>
 
 <script>
 (function(){
@@ -163,6 +239,7 @@ const COLOURS={
 const ORDER=["white","yellow","green","brown","blue","pink","black"];
 
 const svg=document.getElementById("table");
+const stage=document.getElementById("stage");
 const el=(tag,attrs,parent)=>{const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;};
 
 /* ---------- defs ---------- */
@@ -215,7 +292,7 @@ const holes=[[-ck,-ck,CORNER.hole],[L+ck,-ck,CORNER.hole],[-ck,W+ck,CORNER.hole]
   [MIDX,-C-mk,MIDDLE.hole],[MIDX,W+C+mk,MIDDLE.hole]];
 
 /* ---------- static table ---------- */
-const world=el("g",{},svg);
+const world=el("g",{id:"world"},svg);
 el("rect",{x:-M,y:-M,width:L+2*M,height:W+2*M,rx:70,fill:"url(#g-wood)"},world);
 el("rect",{x:-M+10,y:-M+10,width:L+2*M-20,height:W+2*M-20,rx:62,fill:"none",stroke:"#7A4527","stroke-opacity":".5","stroke-width":3},world);
 el("rect",{x:-C,y:-C,width:L+2*C,height:W+2*C,fill:"url(#g-cloth)"},world);
@@ -260,40 +337,40 @@ function makeNode(b){
   g.addEventListener("focus",()=>select(b.id));
   nodes[b.id]=g; return g;
 }
-function render(){
-  balls.forEach(b=>{
-    const g=nodes[b.id]||makeNode(b);
-    g.style.display=b.on?"":"none";
-    g.setAttribute("transform",`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)})`);
-    g.classList.toggle("sel",b.id===selected);
-    g.classList.toggle("removing",!!b.removing);
-  });
-  // keep the selected/dragged ball on top
-  if(selected&&nodes[selected])ballLayer.appendChild(nodes[selected]);
-  renderTray(); renderReadout();
-  undoBtn.disabled=!history.length;
-}
 
-/* ---------- orientation ---------- */
+
+/* ---------- layout & orientation ---------- */
+const phoneMQ=matchMedia("(max-width:700px), (max-height:520px) and (pointer:coarse)");
+const isPhone=()=>phoneMQ.matches;
 let portraitOverride=null;
-function isPortrait(){return portraitOverride!=null?portraitOverride:svg.parentElement.clientWidth<620;}
+function isPortrait(){
+  if(portraitOverride!=null)return portraitOverride;
+  if(isPhone()){ // pick whichever orientation makes the balls bigger
+    const w=stage.clientWidth, h=stage.clientHeight;
+    const land=Math.min(w/(L+2*M),h/(W+2*M)), port=Math.min(w/(W+2*M),h/(L+2*M));
+    return port>land;
+  }
+  return stage.clientWidth<620;
+}
 function applyOrientation(){
-  if(isPortrait()){
+  const p=isPortrait();
+  if(p){
     svg.setAttribute("viewBox",`${-M} ${-M} ${W+2*M} ${L+2*M}`);
     world.setAttribute("transform",`matrix(0 -1 1 0 0 ${L})`); // baulk at the bottom, yellow on the right
   }else{
     svg.setAttribute("viewBox",`${-M} ${-M} ${L+2*M} ${W+2*M}`);
     world.setAttribute("transform","");                         // baulk on the left
   }
-  svg.dataset.portrait=isPortrait()?"1":"0";
 }
 window.addEventListener("resize",()=>{if(portraitOverride==null)applyOrientation();});
+phoneMQ.addEventListener?phoneMQ.addEventListener("change",()=>{closeSheet();applyOrientation();}):0;
 
 /* ---------- state helpers ---------- */
 let selected=null; const history=[];
+let snapOn=true;
 const snap=()=>balls.map(b=>({id:b.id,x:b.x,y:b.y,on:b.on}));
 function pushHistory(){history.push(snap()); if(history.length>100)history.shift();}
-function restore(s){s.forEach(o=>{const b=byId(o.id);b.x=o.x;b.y=o.y;b.on=o.on;b.removing=false;});}
+function restore(s){s.forEach(o=>{const b=byId(o.id);b.x=o.x;b.y=o.y;b.on=o.on;b.removing=false;b.snapped=false;});}
 const byId=id=>balls.find(b=>b.id===id);
 const clampX=x=>Math.max(R,Math.min(L-R,x)), clampY=y=>Math.max(R,Math.min(W-R,y));
 function overlaps(x,y,id){return balls.some(o=>o.on&&o.id!==id&&Math.hypot(o.x-x,o.y-y)<2*R-0.01);}
@@ -310,40 +387,116 @@ function resolve(b,x,y){
   }
   return overlaps(x,y,b.id)?null:[x,y];
 }
+// Snap to a free spot, to touching the nearest ball, or to touching a cushion.
+function snapTo(b,p,rad){
+  for(const k in SPOTS){const s=SPOTS[k];
+    if(Math.hypot(p[0]-s[0],p[1]-s[1])<rad&&!overlaps(s[0],s[1],b.id))return s.slice();}
+  let best=null,bg=Infinity;
+  for(const o of balls){if(!o.on||o.id===b.id)continue;
+    const d=Math.hypot(p[0]-o.x,p[1]-o.y), gap=d-2*R;
+    if(gap>0.01&&gap<rad&&gap<bg){bg=gap;best=o;}}
+  if(best){const d=Math.hypot(p[0]-best.x,p[1]-best.y);
+    const t=[best.x+(p[0]-best.x)/d*2*R, best.y+(p[1]-best.y)/d*2*R];
+    if(t[0]>=R&&t[0]<=L-R&&t[1]>=R&&t[1]<=W-R&&!overlaps(t[0],t[1],b.id))return t;}
+  let x=p[0],y=p[1],hit=false;
+  if(x-R>0.01&&x-R<rad){x=R;hit=true}else if(L-R-x>0.01&&L-R-x<rad){x=L-R;hit=true}
+  if(y-R>0.01&&y-R<rad){y=R;hit=true}else if(W-R-y>0.01&&W-R-y<rad){y=W-R;hit=true}
+  if(hit&&!overlaps(x,y,b.id))return [x,y];
+  return null;
+}
 function select(id){selected=id; render();}
 
+function render(){
+  balls.forEach(b=>{
+    const g=nodes[b.id]||makeNode(b);
+    g.style.display=b.on?"":"none";
+    g.setAttribute("transform",`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)})`);
+    g.classList.toggle("sel",b.id===selected);
+    g.classList.toggle("removing",!!b.removing);
+    g.classList.toggle("snapped",!!b.snapped&&!!drag);
+  });
+  if(selected&&nodes[selected])ballLayer.appendChild(nodes[selected]);
+  renderTray(); renderStatus();
+  undoBtn.disabled=!history.length;
+  if(typeof afterRender==="function")afterRender();
+}
+
 /* ---------- pointer interaction ---------- */
-function toTable(cx,cy){const p=svg.createSVGPoint();p.x=cx;p.y=cy;const m=world.getScreenCTM().inverse();const q=p.matrixTransform(m);return [q.x,q.y,Math.hypot(m.a,m.b)];}
+function ctmInv(){return world.getScreenCTM().inverse();}
+function toTable(cx,cy){const p=svg.createSVGPoint();p.x=cx;p.y=cy;const m=ctmInv();const q=p.matrixTransform(m);return [q.x,q.y,Math.hypot(m.a,m.b)];}
+const loupe=document.getElementById("loupe"), loupeSvg=document.getElementById("loupesvg");
+const LOUPE=132, ZOOM=3.5;
+function showLoupe(b,cx,cy){
+  const k=svg.getScreenCTM().a; // screen px per table mm
+  const span=LOUPE/(k*ZOOM);
+  const X=isPortrait()?b.y:b.x, Y=isPortrait()?L-b.x:b.y;
+  loupeSvg.setAttribute("viewBox",`${X-span/2} ${Y-span/2} ${span} ${span}`);
+  let lx=cx, ly=cy-LOUPE/2-56;
+  if(ly-LOUPE/2<6){ly=cy;lx=cx+(cx<innerWidth/2?1:-1)*(LOUPE/2+48);}
+  lx=Math.max(LOUPE/2+4,Math.min(innerWidth-LOUPE/2-4,lx)); ly=Math.max(LOUPE/2+4,ly);
+  loupe.style.transform=`translate(${lx-LOUPE/2}px,${ly-LOUPE/2}px)`;
+  loupe.classList.toggle("snapped",!!b.snapped);
+  loupe.hidden=false;
+}
 let drag=null;
-function startDrag(b,cx,cy,offset){
-  pushHistory(); drag={b,off:offset,changed:false,last:[b.x,b.y]};
+function startDrag(b,e,mode,offset){
+  pushHistory();
+  drag={b,id:e.pointerId,mode,off:offset||[0,0],touch:e.pointerType!=="mouse",
+        v:[b.x,b.y],lc:[e.clientX,e.clientY],lt:e.timeStamp||performance.now(),speed:0,changed:false,last:[b.x,b.y]};
   selected=b.id; svg.classList.add("dragging"); render();
+  if(drag.touch)showLoupe(b,e.clientX,e.clientY);
 }
 svg.addEventListener("pointerdown",e=>{
+  if(drag)return;
   const [x,y,mmPerPx]=toTable(e.clientX,e.clientY);
-  const reach=Math.max(R,16*mmPerPx);
+  const reach=Math.max(R,(e.pointerType==="mouse"?14:24)*mmPerPx);
   let best=null,bd=Infinity;
   balls.forEach(b=>{if(!b.on)return;const d=Math.hypot(b.x-x,b.y-y);if(d<reach&&d<bd){bd=d;best=b;}});
   if(!best){selected=null;render();return;}
   e.preventDefault(); nodes[best.id].focus({preventScroll:true});
-  startDrag(best,e.clientX,e.clientY,[best.x-x,best.y-y]);
+  // Mouse follows the pointer exactly. Touch and pen move the ball relative to the finger,
+  // slowing down when the finger moves slowly so small adjustments are easy.
+  startDrag(best,e,e.pointerType==="mouse"?"abs":"rel",[best.x-x,best.y-y]);
 });
-window.addEventListener("pointermove",e=>{
-  if(!drag)return;
-  const [px,py]=toTable(e.clientX,e.clientY), b=drag.b;
-  const x=px+drag.off[0], y=py+drag.off[1];
+function moveDrag(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  const b=drag.b, m=ctmInv(), mmPerPx=Math.hypot(m.a,m.b);
+  let cand;
+  if(drag.mode==="abs"){
+    const [px,py]=toTable(e.clientX,e.clientY); cand=[px+drag.off[0],py+drag.off[1]];
+  }else{
+    const dx=e.clientX-drag.lc[0], dy=e.clientY-drag.lc[1];
+    const t=e.timeStamp||performance.now(), dt=Math.max(1,t-drag.lt);
+    drag.speed=drag.speed*0.6+(Math.hypot(dx,dy)/dt)*0.4;       // px per ms, smoothed
+    const gear=0.3+0.7*Math.max(0,Math.min(1,(drag.speed-0.05)/0.55));
+    cand=[drag.v[0]+(m.a*dx+m.c*dy)*gear, drag.v[1]+(m.b*dx+m.d*dy)*gear];
+    drag.lc=[e.clientX,e.clientY]; drag.lt=t;
+  }
   drag.changed=true;
-  const off=x<-R*0.2||x>L+R*0.2||y<-R*0.2||y>W+R*0.2;
-  if(off){b.removing=true;b.x=x;b.y=y;}
-  else{b.removing=false;const p=resolve(b,x,y);if(p){b.x=p[0];b.y=p[1];drag.last=p;}}
+  const cl=[clampX(cand[0]),clampY(cand[1])], over=Math.hypot(cand[0]-cl[0],cand[1]-cl[1]);
+  const offLimit=drag.mode==="abs"?1.2*R:70;
+  if(over>offLimit){b.removing=true;b.snapped=false;b.x=cand[0];b.y=cand[1];drag.v=cand;}
+  else{
+    b.removing=false;
+    const p=resolve(b,cand[0],cand[1]);
+    if(p){
+      const s=snapOn?snapTo(b,p,Math.max(4,Math.min(15,5*mmPerPx))):null;
+      b.snapped=!!s; const q=s||p;
+      b.x=q[0];b.y=q[1];drag.last=q;
+      drag.v=[p[0]+(cand[0]-cl[0]),p[1]+(cand[1]-cl[1])]; // keep cushion overshoot so you can still drag off to pot
+    }
+  }
   render();
-});
-function endDrag(){
-  if(!drag)return;
+  if(drag.touch)showLoupe(b,e.clientX,e.clientY);
+}
+window.addEventListener("pointermove",moveDrag,{passive:true});
+function endDrag(e){
+  if(!drag||(e&&e.pointerId!==drag.id))return;
   const b=drag.b;
   if(b.removing){b.removing=false;b.on=false;[b.x,b.y]=drag.last;selected=null;}
+  b.snapped=false;
   if(!drag.changed)history.pop();
-  drag=null; svg.classList.remove("dragging"); render();
+  drag=null; loupe.hidden=true; svg.classList.remove("dragging"); render();
 }
 window.addEventListener("pointerup",endDrag);
 window.addEventListener("pointercancel",endDrag);
@@ -351,16 +504,16 @@ window.addEventListener("pointercancel",endDrag);
 /* ---------- keyboard ---------- */
 document.addEventListener("keydown",e=>{
   const ae=document.activeElement; if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
+  if(e.key==="Escape"&&document.body.classList.contains("sheet-open")){closeSheet();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undo();return;}
   const b=selected&&byId(selected); if(!b||!b.on)return;
-  if(document.activeElement&&document.activeElement.tagName==="BUTTON")return;
+  if(ae&&ae.tagName==="BUTTON")return;
   const step=e.shiftKey?10:1; let sx=0,sy=0;
   if(e.key==="ArrowLeft")sx=-1; else if(e.key==="ArrowRight")sx=1; else if(e.key==="ArrowUp")sy=-1; else if(e.key==="ArrowDown")sy=1;
   else if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();pushHistory();b.on=false;selected=null;render();return;}
   else if(e.key==="Escape"){selected=null;render();return;}
   else return;
   e.preventDefault();
-  // map screen direction to table axes
   let dx,dy; if(isPortrait()){dx=-sy*step;dy=sx*step;}else{dx=sx*step;dy=sy*step;}
   const p=resolve(b,b.x+dx,b.y+dy); if(p){pushHistory();b.x=p[0];b.y=p[1];render();}
 });
@@ -378,7 +531,6 @@ function freeNear(b,x,y,dir){
 function returnToTable(b){
   let p=null;
   if(b.type==="red"){
-    // nearest free point to the pack area, spiralling out
     const cx=SPOTS.pink[0]+140, cy=MIDY;
     outer: for(let rad=0;rad<1600;rad+=6){for(let a=0;a<360;a+=10){
       const x=clampX(cx+rad*Math.cos(a*Math.PI/180)), y=clampY(cy+rad*Math.sin(a*Math.PI/180));
@@ -399,9 +551,11 @@ function returnToTable(b){
 
 /* ---------- tray ---------- */
 const tray=document.getElementById("tray");
+const rank=b=>b.type==="red"?0:1+ORDER.indexOf(b.type);
 function renderTray(){
   const off=balls.filter(b=>!b.on).sort((a,b)=>rank(a)-rank(b));
   tray.textContent="";
+  tray.parentElement.classList.toggle("none",!off.length);
   if(!off.length){const s=document.createElement("span");s.className="empty";s.textContent="No balls off the table";tray.appendChild(s);return;}
   off.forEach(b=>{
     const c=COLOURS[b.type].c;
@@ -410,19 +564,17 @@ function renderTray(){
     btn.style.background=`radial-gradient(circle at 36% 34%, ${shade(c,.5)}, ${c} 55%, ${shade(c,-.45)})`;
     btn.addEventListener("pointerdown",e=>{
       e.preventDefault();
-      const sx=e.clientX, sy=e.clientY;
+      const sx=e.clientX, sy=e.clientY, pid=e.pointerId;
       const move=ev=>{
-        if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<6)return;
+        if(ev.pointerId!==pid||Math.hypot(ev.clientX-sx,ev.clientY-sy)<8)return;
         cleanup();
         const [x,y]=toTable(ev.clientX,ev.clientY);
         b.on=true; b.x=clampX(x); b.y=clampY(y);
-        startDrag(b,ev.clientX,ev.clientY,[0,0]);
+        startDrag(b,ev,"abs",[0,0]);
         history[history.length-1].forEach(o=>{if(o.id===b.id)o.on=false;});
-        const r=resolve(b,x,y); if(r){b.x=r[0];b.y=r[1];drag.last=r;} drag.changed=true;
-        if(x<-R||x>L+R||y<-R||y>W+R)b.removing=true;
-        render();
+        drag.changed=true; moveDrag(ev);
       };
-      const up=()=>{cleanup();returnToTable(b);};
+      const up=ev=>{if(ev.pointerId!==pid)return;cleanup();returnToTable(b);};
       function cleanup(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);}
       window.addEventListener("pointermove",move);
       window.addEventListener("pointerup",up);
@@ -430,20 +582,26 @@ function renderTray(){
     tray.appendChild(btn);
   });
 }
-const rank=b=>b.type==="red"?0:1+ORDER.indexOf(b.type);
 
-/* ---------- readout ---------- */
-const readout=document.getElementById("readout");
+/* ---------- status line ---------- */
+const statusEl=document.getElementById("status");
 const fmt=n=>Math.round(n).toLocaleString("en-GB");
-function renderReadout(){
+function contact(b){
+  for(const k in SPOTS){const s=SPOTS[k];if(Math.hypot(b.x-s[0],b.y-s[1])<0.5)return "On "+k+" spot";}
+  const touching=balls.filter(o=>o.on&&o.id!==b.id&&Math.hypot(o.x-b.x,o.y-b.y)-2*R<0.5);
+  if(touching.length){const names=[...new Set(touching.map(o=>o.type==="white"?"cue ball":o.type))];return "Touching "+names.join(" and ");}
+  const gap=Math.min(b.x-R,L-R-b.x,b.y-R,W-R-b.y);
+  return gap<0.5?"Touching cushion":"Cushion gap "+fmt(gap)+" mm";
+}
+function renderStatus(){
   const b=selected&&byId(selected);
-  if(!b||!b.on){readout.innerHTML=`<dt>Ball</dt><dd>None selected</dd><dt>On table</dt><dd>${balls.filter(x=>x.on&&x.type==="red").length} reds, ${balls.filter(x=>x.on&&x.type!=="red"&&x.type!=="white").length} colours</dd>`;return;}
+  if(!b||!b.on){
+    const reds=balls.filter(x=>x.on&&x.type==="red").length, cols=balls.filter(x=>x.on&&x.type!=="red"&&x.type!=="white").length;
+    statusEl.innerHTML=`<span>${reds} red${reds===1?"":"s"}, ${cols} colour${cols===1?"":"s"} on the table</span><span class="dim">Drag a ball to move it, or off the table to pot it</span>`;
+    return;
+  }
   const name=b.type==="red"?"Red":COLOURS[b.type].name;
-  const edgeB=b.x-R, edgeL=b.y-R;
-  readout.innerHTML=`<dt>Ball</dt><dd>${name}</dd>
-    <dt>Centre from baulk cushion</dt><dd>${fmt(b.x)} mm</dd>
-    <dt>Centre from left cushion</dt><dd>${fmt(b.y)} mm</dd>
-    <dt>Nearest cushion gap</dt><dd>${fmt(Math.min(b.x-R,L-R-b.x,b.y-R,W-R-b.y))} mm</dd>`;
+  statusEl.innerHTML=`<b>${name}</b><span><span class="dim">From baulk</span> ${fmt(b.x)} mm</span><span><span class="dim">From left</span> ${fmt(b.y)} mm</span><span class="tag">${contact(b)}</span>`;
 }
 
 /* ---------- controls ---------- */
@@ -451,8 +609,18 @@ const undoBtn=document.getElementById("undo");
 function undo(){if(!history.length)return;restore(history.pop());selected=null;render();}
 undoBtn.addEventListener("click",undo);
 document.getElementById("reset").addEventListener("click",()=>{pushHistory();const fresh=breakOff();fresh.forEach(f=>{const b=byId(f.id);b.x=f.x;b.y=f.y;b.on=true;});selected=null;render();});
-document.getElementById("noreds").addEventListener("click",()=>{if(!balls.some(b=>b.on&&b.type==="red"))return;pushHistory();balls.forEach(b=>{if(b.type==="red")b.on=false;});if(selected&&byId(selected).type==="red")selected=null;render();});
-document.getElementById("rotate").addEventListener("click",()=>{portraitOverride=!isPortrait();applyOrientation();});
+document.getElementById("noreds").addEventListener("click",()=>{if(!balls.some(b=>b.on&&b.type==="red"))return;pushHistory();balls.forEach(b=>{if(b.type==="red")b.on=false;});if(selected&&byId(selected).type==="red")selected=null;render();closeSheet();});
+document.getElementById("rotate").addEventListener("click",()=>{portraitOverride=!isPortrait();applyOrientation();closeSheet();});
+const snapBtn=document.getElementById("snap");
+snapBtn.addEventListener("click",()=>{snapOn=!snapOn;snapBtn.setAttribute("aria-pressed",String(snapOn));snapBtn.textContent=snapOn?"Snap on":"Snap off";});
+
+/* ---------- More sheet (phones) ---------- */
+const moreBtn=document.getElementById("morebtn");
+function openSheet(){document.body.classList.add("sheet-open");moreBtn.setAttribute("aria-expanded","true");document.getElementById("closemore").focus();}
+function closeSheet(){if(!document.body.classList.contains("sheet-open"))return;document.body.classList.remove("sheet-open");moreBtn.setAttribute("aria-expanded","false");}
+moreBtn.addEventListener("click",openSheet);
+document.getElementById("closemore").addEventListener("click",()=>{closeSheet();moreBtn.focus();});
+document.getElementById("scrim").addEventListener("click",closeSheet);
 
 /* ---------- sharing ----------
    Layout code: "s1" + base64url of 3 bytes per ball (fixed order):
@@ -486,7 +654,7 @@ function refreshShare(){
   const code=encodeLayout();
   if(canLink){shareInput.value=location.href.split("#")[0]+"#"+code;}
   else{document.getElementById("sharelink-label").textContent="Layout code";shareInput.value=code;
-    shareMsg.textContent="Send this code to someone and they can paste it here to see exactly this position.";}
+    if(!/copied|loaded|recognised|Press/.test(shareMsg.textContent))shareMsg.textContent="Send this code to someone and they can paste it here to see exactly this position.";}
 }
 shareBtn.addEventListener("click",()=>{
   const open=sharebox.hidden; sharebox.hidden=!open; shareBtn.setAttribute("aria-expanded",String(open));
@@ -504,8 +672,7 @@ document.getElementById("loadcode").addEventListener("click",()=>{
   applyLayout(layout,true); refreshShare(); shareMsg.textContent="Layout loaded.";
 });
 window.addEventListener("hashchange",()=>{const l=decodeLayout(location.hash);if(l){applyLayout(l,true);if(!sharebox.hidden)refreshShare();}});
-// keep the share box current as the position changes
-const _render=render; render=function(){_render();if(!sharebox.hidden)refreshShare();};
+var afterRender=function(){if(!sharebox.hidden&&!drag)refreshShare();};
 
 balls=breakOff();
 applyOrientation();
