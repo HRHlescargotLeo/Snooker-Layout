@@ -10,7 +10,7 @@
 body{margin:0}
 [hidden]{display:none!important}
 </style>
-<title>Snooker Layout Board</title>
+<title>Snooker &amp; Pool Layout Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap">
@@ -39,13 +39,14 @@ body{font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;
 
 /* ---- desktop / tablet layout ---- */
 .app{max-width:1280px;margin:0 auto;display:grid;gap:12px 16px;
-  grid-template-columns:minmax(0,1fr) auto auto;
-  grid-template-areas:"head tools2 tools" "share share share" "stage stage stage" "status status status" "tray tray tray" "specs specs specs";}
-@media (max-width:1100px){.app{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"head head" "tools tools2" "share share" "stage stage" "status status" "tray tray" "specs specs"}}
+  grid-template-columns:max-content minmax(0,1fr) auto;
+  grid-template-areas:"head head head" "tabs tools2 tools" "share share share" "stage stage stage" "status status status" "tray tray tray" "specs specs specs";}
+@media (max-width:1360px){.app{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"head head" "tabs tabs" "tools tools2" "share share" "stage stage" "status status" "tray tray" "specs specs"}}
 .head{grid-area:head;align-self:end}
+.tabs{grid-area:tabs;align-self:end}
 .tools{grid-area:tools;display:flex;flex-wrap:wrap;gap:8px;align-self:end}
 .more{display:contents}
-.tools2{grid-area:tools2;display:flex;flex-wrap:wrap;gap:8px;align-self:end}
+.tools2{grid-area:tools2;display:flex;flex-wrap:wrap;gap:8px;align-self:end;justify-content:flex-end}
 #sharebox{grid-area:share}
 .specs-wrap{grid-area:specs}
 .stage{grid-area:stage;position:relative;display:flex;justify-content:center}
@@ -62,6 +63,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button:disabled{opacity:.45;cursor:default}
 button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+
+/* game tabs: a segmented control */
+.tabs{display:flex;background:var(--tray);border-radius:8px;padding:3px;width:max-content;max-width:100%}
+.tabs button{border:none;background:transparent;border-radius:6px;padding:9px 18px;font-size:15px;color:var(--muted);white-space:nowrap}
+.tabs button:hover{background:var(--btn-hover);color:var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--btn);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.tabs .sub{font-weight:500;letter-spacing:.02em;text-transform:none;font-family:var(--body);font-size:13px;color:var(--muted);margin-left:6px}
+
 #table{display:block;width:100%;height:auto;max-height:82vh;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .ball{cursor:grab}
 .ball:focus{outline:none}
@@ -104,9 +113,12 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
   html{height:100%;box-sizing:border-box}
   body{height:100%;box-sizing:border-box;padding-block:8px;overflow:hidden}
   .app{height:100%;gap:8px;grid-template-columns:minmax(0,1fr);
-    grid-template-rows:minmax(0,1fr) auto auto auto;
-    grid-template-areas:"stage" "status" "tray" "tools"}
+    grid-template-rows:auto minmax(0,1fr) auto auto auto;
+    grid-template-areas:"tabs" "stage" "status" "tray" "tools"}
   .head,.hint.desk{display:none}
+  .tabs{width:100%}
+  .tabs button{flex:1;padding:8px 6px}
+  .tabs .sub{display:none}
   .status{height:58px;overflow:hidden;align-content:center}
   .traybar.none{display:none}
   .stage{min-height:0}
@@ -129,14 +141,12 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
   .tools2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .tools2 button{padding:12px 4px;font-size:13px}
   #sharebox{background:transparent;border:none;padding:0}
-  .specs-wrap details{color:var(--muted)}
 }
 /* phone held sideways: table on the left, controls in a column on the right */
 @media (max-height:520px) and (pointer:coarse) and (orientation:landscape){
   body{padding-block:6px}
-  .app{grid-template-columns:minmax(0,1fr) 200px;grid-template-rows:minmax(0,1fr) auto auto auto;
-    grid-template-areas:"stage status" "stage tray" "stage tools" "stage ."}
-  .head{display:none}
+  .app{grid-template-columns:minmax(0,1fr) 200px;grid-template-rows:auto minmax(0,1fr) auto auto;
+    grid-template-areas:"stage tabs" "stage status" "stage tray" "stage tools"}
   .status{align-self:start;height:auto}
   .tools{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -146,8 +156,13 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
 <body>
 <div class="app" id="app">
   <div class="head">
-    <h1>Snooker Layout Board</h1>
-    <p class="lede">Drag the balls to recreate any position. The table, spots, D, balls and pocket jaws are all drawn to scale.</p>
+    <h1>Snooker &amp; Pool Layout Board</h1>
+    <p class="lede">Drag the balls to recreate any position. The table, markings, balls and pocket jaws are all drawn to scale.</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Game">
+    <button role="tab" id="tab-snooker" data-game="snooker" aria-selected="true" aria-controls="stage">Snooker<span class="sub">12 ft</span></button>
+    <button role="tab" id="tab-pool" data-game="pool" aria-selected="false" aria-controls="stage" tabindex="-1">English pool<span class="sub">7 ft, 8-ball</span></button>
   </div>
 
   <div class="tools" role="toolbar" aria-label="Table controls">
@@ -160,11 +175,11 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
   <div class="scrim" id="scrim"></div>
   <div class="more" id="more" role="region" aria-label="More options">
     <div class="sheet-head">
-      <p class="label">Snooker Layout Board</p>
+      <p class="label">Snooker &amp; Pool Layout Board</p>
       <button id="closemore" type="button">Close</button>
     </div>
     <div class="tools2" role="toolbar" aria-label="More table controls">
-      <button id="noreds" type="button">Remove reds</button>
+      <button id="clearballs" type="button">Remove reds</button>
       <button id="rotate" type="button">Rotate view</button>
       <button id="share" type="button" aria-expanded="false" aria-controls="sharebox">Share layout</button>
     </div>
@@ -187,7 +202,7 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
     <div class="specs-wrap">
       <details id="specs">
         <summary>Dimensions used</summary>
-        <ul class="specs">
+        <ul class="specs" id="specs-snooker">
           <li>Playing area: <b>3,569 × 1,778 mm</b> (11 ft 8½ in × 5 ft 10 in)</li>
           <li>Balls: <b>52.5 mm</b> diameter</li>
           <li>Baulk line: <b>737 mm</b> from the bottom cushion face</li>
@@ -200,12 +215,22 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
           <li>Middle pockets: <b>108 mm</b> at the fall, rounded jaws flaring to the nose</li>
           <li>Cushion rubber: <b>50 mm</b> from nose to rail</li>
         </ul>
+        <ul class="specs" id="specs-pool" hidden>
+          <li>Playing area: <b>1,829 × 914 mm</b> (6 ft × 3 ft, the 7 ft league table)</li>
+          <li>Object balls: <b>50.8 mm</b> (2 in). Cue ball: <b>47.6 mm</b> (1⅞ in)</li>
+          <li>Baulk line: one fifth of the length, <b>366 mm</b> from the bottom cushion</li>
+          <li>Black spot: where the diagonals from the corner to the middle pockets cross, <b>1,372 mm</b> from the bottom cushion</li>
+          <li>Rack: black on the black spot, in the middle of the third row</li>
+          <li>Cue ball: starts in baulk, played from anywhere behind the baulk line</li>
+          <li>Pockets: <b>81 mm</b> between the jaws (1.6 × ball diameter), rounded like snooker pockets</li>
+          <li>Cushion rubber: <b>40 mm</b> from nose to rail</li>
+        </ul>
         <p class="hint" style="margin-top:10px">Keyboard: with a ball selected, arrow keys nudge it 1&nbsp;mm (Shift for 10&nbsp;mm), Delete takes it off the table, Ctrl+Z undoes.</p>
       </details>
     </div>
   </div>
 
-  <div class="stage" id="stage"><svg id="table" role="application" aria-label="Snooker table, top-down view"></svg></div>
+  <div class="stage" id="stage" role="tabpanel" aria-labelledby="tab-snooker"><svg id="table" role="application" aria-label="Table, top-down view"></svg></div>
 
   <div class="bar status" id="status" aria-live="polite"></div>
 
@@ -216,48 +241,112 @@ summary{cursor:pointer;font:600 13px/1.4 var(--display);letter-spacing:.1em;text
   </div>
 </div>
 
-<div class="loupe" id="loupe" hidden><svg id="loupesvg"><use href="#world"></use></svg></div>
+<div class="loupe" id="loupe" hidden><svg id="loupesvg"><use id="loupeuse" href="#world-snooker"></use></svg></div>
 
 <script>
 (function(){
 const NS="http://www.w3.org/2000/svg";
-const L=3569, W=1778, R=26.25, C=50, RAIL=125, M=C+RAIL;
-const MIDX=L/2, MIDY=W/2, BAULK=737, DR=292;
-// Pocket geometry (mm). Openings measured between the cushion facings.
-const CORNER={nose:97, fall:89, jaw:12, hole:52};
-const MIDDLE={nose:122, fall:108, jaw:24, hole:58};
-
-const SPOTS={
-  yellow:[BAULK, MIDY+DR], green:[BAULK, MIDY-DR], brown:[BAULK, MIDY],
-  blue:[MIDX, MIDY], pink:[(MIDX+L)/2, MIDY], black:[L-324, MIDY]
-};
-const COLOURS={
-  red:{c:"#C4122F", name:"Red"}, yellow:{c:"#F1C517", name:"Yellow"}, green:{c:"#0E6E3C", name:"Green"},
-  brown:{c:"#6A3A1C", name:"Brown"}, blue:{c:"#1B4FB5", name:"Blue"}, pink:{c:"#EE7FA6", name:"Pink"},
-  black:{c:"#141414", name:"Black"}, white:{c:"#F4F0E4", name:"Cue ball"}
-};
-const ORDER=["white","yellow","green","brown","blue","pink","black"];
-
 const svg=document.getElementById("table");
 const stage=document.getElementById("stage");
 const el=(tag,attrs,parent)=>{const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;};
-
-/* ---------- defs ---------- */
-const defs=el("defs",{},svg);
-function radial(id,stops,attrs){const g=el("radialGradient",Object.assign({id},attrs||{}),defs);stops.forEach(([o,c,op])=>el("stop",{offset:o,"stop-color":c,"stop-opacity":op==null?1:op},g));}
 function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
   const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));return "#"+((1<<24)|(f(r)<<16)|(f(g)<<8)|f(b)).toString(16).slice(1);}
-for(const k in COLOURS){const c=COLOURS[k].c;
-  radial("g-"+k,[["0",shade(c,.55)],["0.18",shade(c,.18)],["0.62",c],["1",shade(c,-.45)]],{cx:"0.36",cy:"0.34",r:"0.72"});}
-radial("g-cloth",[["0",'#23974A'],["0.7",'#1B8540'],["1",'#146E33']],{cx:"0.5",cy:"0.5",r:"0.75"});
-radial("g-hole",[["0",'#000'],["0.7",'#0A0806'],["1",'#2A1B10']],{});
+
+/* =====================================================================
+   Game definitions. All measurements in millimetres; x runs from the
+   baulk cushion up the table, y from the left cushion (seen from baulk).
+   ===================================================================== */
+const SNOOKER=(()=>{
+  const L=3569, W=1778, R=26.25, MIDX=L/2, MIDY=W/2, BAULK=737, DR=292;
+  const spots={yellow:[BAULK,MIDY+DR], green:[BAULK,MIDY-DR], brown:[BAULK,MIDY],
+    blue:[MIDX,MIDY], pink:[(MIDX+L)/2,MIDY], black:[L-324,MIDY]};
+  const colours={
+    red:{c:"#C4122F",name:"Red"}, yellow:{c:"#F1C517",name:"Yellow"}, green:{c:"#0E6E3C",name:"Green"},
+    brown:{c:"#6A3A1C",name:"Brown"}, blue:{c:"#1B4FB5",name:"Blue"}, pink:{c:"#EE7FA6",name:"Pink"},
+    black:{c:"#141414",name:"Black"}, white:{c:"#F4F0E4",name:"Cue ball"}};
+  const cueStart=[BAULK-12, MIDY+DR*0.55];
+  return {
+    key:"snooker", prefix:"s1", L, W, C:50, RAIL:125, railRadius:70, chalk:3, spotR:6,
+    corner:{nose:97, fall:89, jaw:12, hole:52}, middle:{nose:122, fall:108, jaw:24, hole:58},
+    baulk:BAULK, D:DR, spots, colours, cueStart,
+    rankOrder:["red","white","yellow","green","brown","blue","pink","black"],
+    clearLabel:"Remove reds", clearTypes:["red"],
+    breakOff(){
+      const b=[{id:"white",type:"white",r:R,x:cueStart[0],y:cueStart[1],on:true}];
+      ["yellow","green","brown","blue","pink","black"].forEach(k=>b.push({id:k,type:k,r:R,x:spots[k][0],y:spots[k][1],on:true}));
+      const apex=spots.pink[0]+2*R+1.5, gap=0.25, dx=(2*R+gap)*Math.sqrt(3)/2; let n=1;
+      for(let row=0;row<5;row++)for(let j=0;j<=row;j++)
+        b.push({id:"red"+(n++),type:"red",r:R,x:apex+row*dx,y:MIDY+(j-row/2)*(2*R+gap),on:true});
+      return b;
+    },
+    summary(balls){const reds=balls.filter(x=>x.on&&x.type==="red").length, cols=balls.filter(x=>x.on&&x.type!=="red"&&x.type!=="white").length;
+      return `${reds} red${reds===1?"":"s"}, ${cols} colour${cols===1?"":"s"} on the table`;},
+    respotTarget(b,free,freeNear){
+      if(b.type==="red")return null; // reds use the default: nearest free point to the pack
+      if(b.type==="white")return freeNear(b,cueStart[0],cueStart[1],-1);
+      const own=spots[b.type]; if(free(b,own))return own.slice();
+      for(const k of ["black","pink","blue","brown","green","yellow"])if(free(b,spots[k]))return spots[k].slice();
+      return freeNear(b,own[0],own[1],1)||freeNear(b,own[0],own[1],-1);
+    },
+    packPoint:[spots.pink[0]+140, MIDY]
+  };
+})();
+
+const POOL=(()=>{
+  // 7 ft English pool (blackball) table: 72 x 36 in playing area.
+  const L=1829, W=914, R=25.4, RC=23.8125, MIDX=L/2, MIDY=W/2, BAULK=L/5;
+  const spots={black:[L*3/4, MIDY]}; // where the corner-to-middle-pocket diagonals cross
+  const colours={red:{c:"#CC1B2B",name:"Red"}, yellow:{c:"#F3C212",name:"Yellow"},
+    black:{c:"#141414",name:"Black"}, white:{c:"#F4F0E4",name:"Cue ball"}};
+  const cueStart=[BAULK-75, MIDY];
+  // Rack, apex towards baulk. Row by row from the apex; within a row, left to right as seen from baulk.
+  // Y = yellow, R = red, B = black (on the black spot, middle of row 3).
+  const RACK=["Y","RY","RBY","RRYY","YRRYR"];
+  return {
+    key:"pool", prefix:"p1", L, W, C:40, RAIL:95, railRadius:45, chalk:2.5, spotR:5,
+    corner:{nose:88, fall:81, jaw:9, hole:47}, middle:{nose:98, fall:81, jaw:18, hole:47},
+    baulk:BAULK, D:null, spots, colours, cueStart,
+    rankOrder:["red","yellow","black","white"],
+    clearLabel:"Remove reds & yellows", clearTypes:["red","yellow"],
+    breakOff(){
+      const b=[{id:"white",type:"white",r:RC,x:cueStart[0],y:cueStart[1],on:true}];
+      const gap=0.25, dx=(2*R+gap)*Math.sqrt(3)/2, bx=spots.black[0];
+      let nr=1, ny=1;
+      RACK.forEach((row,ri)=>{[...row].forEach((ch,j)=>{
+        const x=bx+(ri-2)*dx, y=MIDY+(j-ri/2)*(2*R+gap);
+        if(ch==="B")b.splice(1,0,{id:"black",type:"black",r:R,x,y,on:true});
+        else if(ch==="R")b.push({id:"red"+(nr++),type:"red",r:R,x,y,on:true});
+        else b.push({id:"yellow"+(ny++),type:"yellow",r:R,x,y,on:true});
+      });});
+      return b;
+    },
+    summary(balls){const n=t=>balls.filter(x=>x.on&&x.type===t).length;
+      const r=n("red"), y=n("yellow");
+      return `${r} red${r===1?"":"s"}, ${y} yellow${y===1?"":"s"}${n("black")?" and the black":""} on the table`;},
+    respotTarget(b,free,freeNear){
+      // Object balls go on the black spot, or as near behind it as possible.
+      if(b.type==="white")return freeNear(b,cueStart[0],cueStart[1],-1);
+      return freeNear(b,spots.black[0],spots.black[1],1)||freeNear(b,spots.black[0],spots.black[1],-1);
+    },
+    packPoint:[spots.black[0], MIDY]
+  };
+})();
+const GAMES={snooker:SNOOKER, pool:POOL};
+
+/* ---------- shared defs ---------- */
+const defs=el("defs",{},svg);
+function radial(id,stops,attrs){const g=el("radialGradient",Object.assign({id},attrs||{}),defs);stops.forEach(([o,c])=>el("stop",{offset:o,"stop-color":c},g));}
+for(const G of Object.values(GAMES))for(const k in G.colours){const c=G.colours[k].c;
+  radial(`g-${G.key}-${k}`,[["0",shade(c,.55)],["0.18",shade(c,.18)],["0.62",c],["1",shade(c,-.45)]],{cx:"0.36",cy:"0.34",r:"0.72"});}
+radial("g-cloth",[["0","#23974A"],["0.7","#1B8540"],["1","#146E33"]],{cx:"0.5",cy:"0.5",r:"0.75"});
+radial("g-hole",[["0","#000"],["0.7","#0A0806"],["1","#2A1B10"]],{});
 const wood=el("linearGradient",{id:"g-wood",x1:"0",y1:"0",x2:"1",y2:"1"},defs);
 [["0","#5A301C"],["0.5","#3E1F11"],["1","#57301B"]].forEach(([o,c])=>el("stop",{offset:o,"stop-color":c},wood));
 const blur=el("filter",{id:"f-shadow",x:"-50%",y:"-50%",width:"200%",height:"200%"},defs);
 el("feGaussianBlur",{stdDeviation:"5"},blur);
 
 /* ---------- geometry helpers ---------- */
-function roundedPath(pts){ // pts: [x,y,radius]
+function roundedPath(pts){ // pts: [x,y,radius]; rounds each corner with a fillet of that radius
   const n=pts.length; let d="";
   for(let i=0;i<n;i++){
     const [x,y,r]=pts[i];
@@ -273,71 +362,54 @@ function roundedPath(pts){ // pts: [x,y,radius]
   }
   return d+"Z";
 }
-// Corner jaw: facing runs parallel-ish to the pocket diagonal.
-const cxN=CORNER.nose/Math.SQRT2, cxF=CORNER.fall/Math.SQRT2-C;
-const mxN=MIDX-MIDDLE.nose/2, mxF=MIDX-MIDDLE.fall/2;
-// Top-left cushion in table coords (y<0 is behind the top-of-screen cushion nose)
-const cushionTL=[[cxF,-C,0],[cxN,0,CORNER.jaw],[mxN,0,MIDDLE.jaw],[mxF,-C,0]];
-const tx={
-  id:p=>p, fx:p=>[L-p[0],p[1],p[2]], fy:p=>[p[0],W-p[1],p[2]], fxy:p=>[L-p[0],W-p[1],p[2]]
-};
-const cushionL=[[-C,cxF,0],[0,cxN,CORNER.jaw],[0,W-cxN,CORNER.jaw],[-C,W-cxF,0]];
-// pocket hole centres, solved so the hole edge meets both fall points
-function cornerK(){ // centre at (-k,-k)
-  const a=cxF, b=-C, r=CORNER.hole; // (a+k)^2+(b+k)^2=r^2
-  const A=2, B=2*(a+b), Cc=a*a+b*b-r*r; return (-B+Math.sqrt(B*B-4*A*Cc))/(2*A);
+
+/* ---------- build one table ---------- */
+function buildWorld(G){
+  const {L,W,C,RAIL,corner:CO,middle:MI}=G, M=C+RAIL, MIDX=L/2, MIDY=W/2;
+  G.M=M;
+  const world=el("g",{id:"world-"+G.key},svg);
+  el("rect",{x:-M,y:-M,width:L+2*M,height:W+2*M,rx:G.railRadius,fill:"url(#g-wood)"},world);
+  el("rect",{x:-M+8,y:-M+8,width:L+2*M-16,height:W+2*M-16,rx:G.railRadius-7,fill:"none",stroke:"#7A4527","stroke-opacity":".5","stroke-width":2.5},world);
+  el("rect",{x:-C,y:-C,width:L+2*C,height:W+2*C,fill:"url(#g-cloth)"},world);
+  // Corner jaw: facing runs parallel-ish to the pocket diagonal. Middle jaw: rounded, flaring to the nose.
+  const cxN=CO.nose/Math.SQRT2, cxF=CO.fall/Math.SQRT2-C;
+  const mxN=MIDX-MI.nose/2, mxF=MIDX-MI.fall/2;
+  // pocket hole centres, solved so the hole edge meets both fall points
+  const A=2, B=2*(cxF-C), Cc=cxF*cxF+C*C-CO.hole*CO.hole, ck=(-B+Math.sqrt(B*B-4*A*Cc))/(2*A);
+  const mk=Math.sqrt(Math.max(0,MI.hole**2-(MI.fall/2)**2));
+  [[-ck,-ck,CO.hole],[L+ck,-ck,CO.hole],[-ck,W+ck,CO.hole],[L+ck,W+ck,CO.hole],[MIDX,-C-mk,MI.hole],[MIDX,W+C+mk,MI.hole]]
+    .forEach(([x,y,r])=>{el("circle",{cx:x,cy:y,r:r+8,fill:"#20140C"},world);el("circle",{cx:x,cy:y,r,fill:"url(#g-hole)"},world);});
+  const top=[[cxF,-C,0],[cxN,0,CO.jaw],[mxN,0,MI.jaw],[mxF,-C,0]];
+  const side=[[-C,cxF,0],[0,cxN,CO.jaw],[0,W-cxN,CO.jaw],[-C,W-cxF,0]];
+  const fx=p=>[L-p[0],p[1],p[2]], fy=p=>[p[0],W-p[1],p[2]], fxy=p=>[L-p[0],W-p[1],p[2]];
+  [top,top.map(fx),top.map(fy),top.map(fxy),side,side.map(fx)].forEach(pts=>
+    el("path",{d:roundedPath(pts),fill:"#12692F",stroke:"#0B4F24","stroke-width":1.5},world));
+  el("rect",{x:0,y:0,width:L,height:W,fill:"none",stroke:"#000","stroke-opacity":".18","stroke-width":2},world);
+  const chalk={stroke:"#E9F3EA","stroke-opacity":".75","stroke-width":G.chalk,fill:"none"};
+  el("line",Object.assign({x1:G.baulk,y1:0,x2:G.baulk,y2:W},chalk),world);
+  if(G.D)el("path",Object.assign({d:`M${G.baulk} ${MIDY-G.D} A${G.D} ${G.D} 0 0 0 ${G.baulk} ${MIDY+G.D}`},chalk),world);
+  for(const k in G.spots){const [x,y]=G.spots[k];
+    el("circle",{cx:x,cy:y,r:G.spotR,fill:"#0C3D1E","fill-opacity":".85",stroke:"#E9F3EA","stroke-opacity":".6","stroke-width":1.5},world);}
+  G.world=world;
+  G.ballLayer=el("g",{},world);
+  G.nodes={}; G.balls=G.breakOff(); G.history=[]; G.selected=null;
+  G.order=G.balls.map(b=>b.id); // fixed order used by share codes
 }
-const ck=cornerK(), mk=Math.sqrt(MIDDLE.hole**2-(MIDDLE.fall/2)**2);
-const holes=[[-ck,-ck,CORNER.hole],[L+ck,-ck,CORNER.hole],[-ck,W+ck,CORNER.hole],[L+ck,W+ck,CORNER.hole],
-  [MIDX,-C-mk,MIDDLE.hole],[MIDX,W+C+mk,MIDDLE.hole]];
+Object.values(GAMES).forEach(buildWorld);
 
-/* ---------- static table ---------- */
-const world=el("g",{id:"world"},svg);
-el("rect",{x:-M,y:-M,width:L+2*M,height:W+2*M,rx:70,fill:"url(#g-wood)"},world);
-el("rect",{x:-M+10,y:-M+10,width:L+2*M-20,height:W+2*M-20,rx:62,fill:"none",stroke:"#7A4527","stroke-opacity":".5","stroke-width":3},world);
-el("rect",{x:-C,y:-C,width:L+2*C,height:W+2*C,fill:"url(#g-cloth)"},world);
-holes.forEach(([x,y,r])=>{
-  el("circle",{cx:x,cy:y,r:r+9,fill:"#20140C"},world);
-  el("circle",{cx:x,cy:y,r:r,fill:"url(#g-hole)"},world);
-});
-const cushions=[cushionTL.map(tx.id),cushionTL.map(tx.fx),cushionTL.map(tx.fy),cushionTL.map(tx.fxy),cushionL.map(tx.id),cushionL.map(tx.fx)];
-cushions.forEach(pts=>{
-  el("path",{d:roundedPath(pts),fill:"#12692F",stroke:"#0B4F24","stroke-width":1.5},world);
-});
-// cushion nose highlight
-el("rect",{x:0,y:0,width:L,height:W,fill:"none",stroke:"#000","stroke-opacity":".18","stroke-width":2},world);
-// markings
-const chalk={stroke:"#E9F3EA","stroke-opacity":".75","stroke-width":3,fill:"none"};
-el("line",Object.assign({x1:BAULK,y1:0,x2:BAULK,y2:W},chalk),world);
-el("path",Object.assign({d:`M${BAULK} ${MIDY-DR} A${DR} ${DR} 0 0 0 ${BAULK} ${MIDY+DR}`},chalk),world);
-for(const k in SPOTS){const [x,y]=SPOTS[k];
-  el("circle",{cx:x,cy:y,r:6,fill:"#0C3D1E","fill-opacity":".85",stroke:"#E9F3EA","stroke-opacity":".6","stroke-width":1.5},world);}
-
-const ballLayer=el("g",{},world);
-
-/* ---------- balls ---------- */
-let balls=[];
-function breakOff(){
-  const b=[];
-  b.push({id:"white",type:"white",x:BAULK-12,y:MIDY+DR*0.55,on:true});
-  ["yellow","green","brown","blue","pink","black"].forEach(k=>b.push({id:k,type:k,x:SPOTS[k][0],y:SPOTS[k][1],on:true}));
-  const apex=SPOTS.pink[0]+2*R+1.5, gap=0.25, dx=(2*R+gap)*Math.sqrt(3)/2;
-  let n=1;
-  for(let row=0;row<5;row++)for(let j=0;j<=row;j++)
-    b.push({id:"red"+(n++),type:"red",x:apex+row*dx,y:MIDY+(j-row/2)*(2*R+gap),on:true});
-  return b;
-}
-const nodes={};
+/* ---------- active game ---------- */
+let G=SNOOKER;
+const byId=id=>G.balls.find(b=>b.id===id);
+const clampX=(x,r)=>Math.max(r,Math.min(G.L-r,x)), clampY=(y,r)=>Math.max(r,Math.min(G.W-r,y));
 function makeNode(b){
-  const g=el("g",{class:"ball",tabindex:"0","data-id":b.id,role:"img"},ballLayer);
-  g.setAttribute("aria-label",COLOURS[b.type].name);
-  el("circle",{cx:6,cy:8,r:R,fill:"#000","fill-opacity":".45",filter:"url(#f-shadow)"},g);
-  el("circle",{r:R,fill:`url(#g-${b.type})`},g);
-  el("circle",{class:"ring",r:R+9},g);
-  g.addEventListener("focus",()=>select(b.id));
-  nodes[b.id]=g; return g;
+  const g=el("g",{class:"ball",tabindex:"0","data-id":b.id,role:"img"},G.ballLayer);
+  g.setAttribute("aria-label",G.colours[b.type].name);
+  el("circle",{cx:b.r*0.23,cy:b.r*0.3,r:b.r,fill:"#000","fill-opacity":".45",filter:"url(#f-shadow)"},g);
+  el("circle",{class:"face",r:b.r,fill:`url(#g-${G.key}-${b.type})`},g);
+  el("circle",{class:"ring",r:b.r+9},g);
+  const game=G; g.addEventListener("focus",()=>{if(game===G)select(b.id);});
+  G.nodes[b.id]=g; return g;
 }
-
 
 /* ---------- layout & orientation ---------- */
 const phoneMQ=matchMedia("(max-width:700px), (max-height:520px) and (pointer:coarse)");
@@ -346,90 +418,87 @@ let portraitOverride=null;
 function isPortrait(){
   if(portraitOverride!=null)return portraitOverride;
   if(isPhone()){ // pick whichever orientation makes the balls bigger
-    const w=stage.clientWidth, h=stage.clientHeight;
-    const land=Math.min(w/(L+2*M),h/(W+2*M)), port=Math.min(w/(W+2*M),h/(L+2*M));
+    const w=stage.clientWidth, h=stage.clientHeight, M=G.M;
+    const land=Math.min(w/(G.L+2*M),h/(G.W+2*M)), port=Math.min(w/(G.W+2*M),h/(G.L+2*M));
     return port>land;
   }
   return stage.clientWidth<620;
 }
 function applyOrientation(){
-  const p=isPortrait();
-  if(p){
-    svg.setAttribute("viewBox",`${-M} ${-M} ${W+2*M} ${L+2*M}`);
-    world.setAttribute("transform",`matrix(0 -1 1 0 0 ${L})`); // baulk at the bottom, yellow on the right
+  const M=G.M;
+  if(isPortrait()){
+    svg.setAttribute("viewBox",`${-M} ${-M} ${G.W+2*M} ${G.L+2*M}`);
+    G.world.setAttribute("transform",`matrix(0 -1 1 0 0 ${G.L})`); // baulk at the bottom
   }else{
-    svg.setAttribute("viewBox",`${-M} ${-M} ${L+2*M} ${W+2*M}`);
-    world.setAttribute("transform","");                         // baulk on the left
+    svg.setAttribute("viewBox",`${-M} ${-M} ${G.L+2*M} ${G.W+2*M}`);
+    G.world.setAttribute("transform","");                          // baulk on the left
   }
 }
 window.addEventListener("resize",()=>{if(portraitOverride==null)applyOrientation();});
-phoneMQ.addEventListener?phoneMQ.addEventListener("change",()=>{closeSheet();applyOrientation();}):0;
+if(phoneMQ.addEventListener)phoneMQ.addEventListener("change",()=>{closeSheet();applyOrientation();});
 
 /* ---------- state helpers ---------- */
-let selected=null; const history=[];
 let snapOn=true;
-const snap=()=>balls.map(b=>({id:b.id,x:b.x,y:b.y,on:b.on}));
-function pushHistory(){history.push(snap()); if(history.length>100)history.shift();}
+const snapshot=()=>G.balls.map(b=>({id:b.id,x:b.x,y:b.y,on:b.on}));
+function pushHistory(){G.history.push(snapshot()); if(G.history.length>100)G.history.shift();}
 function restore(s){s.forEach(o=>{const b=byId(o.id);b.x=o.x;b.y=o.y;b.on=o.on;b.removing=false;b.snapped=false;});}
-const byId=id=>balls.find(b=>b.id===id);
-const clampX=x=>Math.max(R,Math.min(L-R,x)), clampY=y=>Math.max(R,Math.min(W-R,y));
-function overlaps(x,y,id){return balls.some(o=>o.on&&o.id!==id&&Math.hypot(o.x-x,o.y-y)<2*R-0.01);}
+function overlaps(x,y,b){return G.balls.some(o=>o.on&&o.id!==b.id&&Math.hypot(o.x-x,o.y-y)<o.r+b.r-0.01);}
 function resolve(b,x,y){
-  x=clampX(x);y=clampY(y);
+  x=clampX(x,b.r);y=clampY(y,b.r);
   for(let it=0;it<12;it++){
     let moved=false;
-    for(const o of balls){
+    for(const o of G.balls){
       if(!o.on||o.id===b.id)continue;
-      let dx=x-o.x, dy=y-o.y, d=Math.hypot(dx,dy);
-      if(d<2*R){ if(d<1e-6){dx=1;dy=0;d=1;} x=o.x+dx/d*2*R; y=o.y+dy/d*2*R; x=clampX(x); y=clampY(y); moved=true; }
+      const need=o.r+b.r; let dx=x-o.x, dy=y-o.y, d=Math.hypot(dx,dy);
+      if(d<need){ if(d<1e-6){dx=1;dy=0;d=1;} x=o.x+dx/d*need; y=o.y+dy/d*need; x=clampX(x,b.r); y=clampY(y,b.r); moved=true; }
     }
     if(!moved)break;
   }
-  return overlaps(x,y,b.id)?null:[x,y];
+  return overlaps(x,y,b)?null:[x,y];
 }
 // Snap to a free spot, to touching the nearest ball, or to touching a cushion.
 function snapTo(b,p,rad){
-  for(const k in SPOTS){const s=SPOTS[k];
-    if(Math.hypot(p[0]-s[0],p[1]-s[1])<rad&&!overlaps(s[0],s[1],b.id))return s.slice();}
+  for(const k in G.spots){const s=G.spots[k];
+    if(Math.hypot(p[0]-s[0],p[1]-s[1])<rad&&!overlaps(s[0],s[1],b))return s.slice();}
   let best=null,bg=Infinity;
-  for(const o of balls){if(!o.on||o.id===b.id)continue;
-    const d=Math.hypot(p[0]-o.x,p[1]-o.y), gap=d-2*R;
+  for(const o of G.balls){if(!o.on||o.id===b.id)continue;
+    const gap=Math.hypot(p[0]-o.x,p[1]-o.y)-o.r-b.r;
     if(gap>0.01&&gap<rad&&gap<bg){bg=gap;best=o;}}
-  if(best){const d=Math.hypot(p[0]-best.x,p[1]-best.y);
-    const t=[best.x+(p[0]-best.x)/d*2*R, best.y+(p[1]-best.y)/d*2*R];
-    if(t[0]>=R&&t[0]<=L-R&&t[1]>=R&&t[1]<=W-R&&!overlaps(t[0],t[1],b.id))return t;}
-  let x=p[0],y=p[1],hit=false;
-  if(x-R>0.01&&x-R<rad){x=R;hit=true}else if(L-R-x>0.01&&L-R-x<rad){x=L-R;hit=true}
-  if(y-R>0.01&&y-R<rad){y=R;hit=true}else if(W-R-y>0.01&&W-R-y<rad){y=W-R;hit=true}
-  if(hit&&!overlaps(x,y,b.id))return [x,y];
+  if(best){const d=Math.hypot(p[0]-best.x,p[1]-best.y), need=best.r+b.r;
+    const t=[best.x+(p[0]-best.x)/d*need, best.y+(p[1]-best.y)/d*need];
+    if(t[0]>=b.r&&t[0]<=G.L-b.r&&t[1]>=b.r&&t[1]<=G.W-b.r&&!overlaps(t[0],t[1],b))return t;}
+  const r=b.r; let x=p[0],y=p[1],hit=false;
+  if(x-r>0.01&&x-r<rad){x=r;hit=true}else if(G.L-r-x>0.01&&G.L-r-x<rad){x=G.L-r;hit=true}
+  if(y-r>0.01&&y-r<rad){y=r;hit=true}else if(G.W-r-y>0.01&&G.W-r-y<rad){y=G.W-r;hit=true}
+  if(hit&&!overlaps(x,y,b))return [x,y];
   return null;
 }
-function select(id){selected=id; render();}
+function select(id){G.selected=id; render();}
 
 function render(){
-  balls.forEach(b=>{
-    const g=nodes[b.id]||makeNode(b);
+  G.balls.forEach(b=>{
+    const g=G.nodes[b.id]||makeNode(b);
     g.style.display=b.on?"":"none";
     g.setAttribute("transform",`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)})`);
-    g.classList.toggle("sel",b.id===selected);
+    g.classList.toggle("sel",b.id===G.selected);
     g.classList.toggle("removing",!!b.removing);
     g.classList.toggle("snapped",!!b.snapped&&!!drag);
   });
-  if(selected&&nodes[selected])ballLayer.appendChild(nodes[selected]);
+  if(G.selected&&G.nodes[G.selected])G.ballLayer.appendChild(G.nodes[G.selected]);
   renderTray(); renderStatus();
-  undoBtn.disabled=!history.length;
-  if(typeof afterRender==="function")afterRender();
+  undoBtn.disabled=!G.history.length;
+  if(!sharebox.hidden&&!drag)refreshShare();
 }
 
 /* ---------- pointer interaction ---------- */
-function ctmInv(){return world.getScreenCTM().inverse();}
+function ctmInv(){return G.world.getScreenCTM().inverse();}
 function toTable(cx,cy){const p=svg.createSVGPoint();p.x=cx;p.y=cy;const m=ctmInv();const q=p.matrixTransform(m);return [q.x,q.y,Math.hypot(m.a,m.b)];}
-const loupe=document.getElementById("loupe"), loupeSvg=document.getElementById("loupesvg");
+const loupe=document.getElementById("loupe"), loupeSvg=document.getElementById("loupesvg"), loupeUse=document.getElementById("loupeuse");
 const LOUPE=132, ZOOM=3.5;
 function showLoupe(b,cx,cy){
-  const k=svg.getScreenCTM().a; // screen px per table mm
+  const k=svg.getScreenCTM().a; // screen px per mm
   const span=LOUPE/(k*ZOOM);
-  const X=isPortrait()?b.y:b.x, Y=isPortrait()?L-b.x:b.y;
+  const X=isPortrait()?b.y:b.x, Y=isPortrait()?G.L-b.x:b.y;
   loupeSvg.setAttribute("viewBox",`${X-span/2} ${Y-span/2} ${span} ${span}`);
   let lx=cx, ly=cy-LOUPE/2-56;
   if(ly-LOUPE/2<6){ly=cy;lx=cx+(cx<innerWidth/2?1:-1)*(LOUPE/2+48);}
@@ -443,17 +512,17 @@ function startDrag(b,e,mode,offset){
   pushHistory();
   drag={b,id:e.pointerId,mode,off:offset||[0,0],touch:e.pointerType!=="mouse",
         v:[b.x,b.y],lc:[e.clientX,e.clientY],lt:e.timeStamp||performance.now(),speed:0,changed:false,last:[b.x,b.y]};
-  selected=b.id; svg.classList.add("dragging"); render();
+  G.selected=b.id; svg.classList.add("dragging"); render();
   if(drag.touch)showLoupe(b,e.clientX,e.clientY);
 }
 svg.addEventListener("pointerdown",e=>{
   if(drag)return;
   const [x,y,mmPerPx]=toTable(e.clientX,e.clientY);
-  const reach=Math.max(R,(e.pointerType==="mouse"?14:24)*mmPerPx);
   let best=null,bd=Infinity;
-  balls.forEach(b=>{if(!b.on)return;const d=Math.hypot(b.x-x,b.y-y);if(d<reach&&d<bd){bd=d;best=b;}});
-  if(!best){selected=null;render();return;}
-  e.preventDefault(); nodes[best.id].focus({preventScroll:true});
+  G.balls.forEach(b=>{if(!b.on)return;const reach=Math.max(b.r,(e.pointerType==="mouse"?14:24)*mmPerPx);
+    const d=Math.hypot(b.x-x,b.y-y);if(d<reach&&d<bd){bd=d;best=b;}});
+  if(!best){G.selected=null;render();return;}
+  e.preventDefault(); G.nodes[best.id].focus({preventScroll:true});
   // Mouse follows the pointer exactly. Touch and pen move the ball relative to the finger,
   // slowing down when the finger moves slowly so small adjustments are easy.
   startDrag(best,e,e.pointerType==="mouse"?"abs":"rel",[best.x-x,best.y-y]);
@@ -473,8 +542,8 @@ function moveDrag(e){
     drag.lc=[e.clientX,e.clientY]; drag.lt=t;
   }
   drag.changed=true;
-  const cl=[clampX(cand[0]),clampY(cand[1])], over=Math.hypot(cand[0]-cl[0],cand[1]-cl[1]);
-  const offLimit=drag.mode==="abs"?1.2*R:70;
+  const cl=[clampX(cand[0],b.r),clampY(cand[1],b.r)], over=Math.hypot(cand[0]-cl[0],cand[1]-cl[1]);
+  const offLimit=drag.mode==="abs"?1.2*b.r:Math.min(70,G.C+20);
   if(over>offLimit){b.removing=true;b.snapped=false;b.x=cand[0];b.y=cand[1];drag.v=cand;}
   else{
     b.removing=false;
@@ -493,9 +562,9 @@ window.addEventListener("pointermove",moveDrag,{passive:true});
 function endDrag(e){
   if(!drag||(e&&e.pointerId!==drag.id))return;
   const b=drag.b;
-  if(b.removing){b.removing=false;b.on=false;[b.x,b.y]=drag.last;selected=null;}
+  if(b.removing){b.removing=false;b.on=false;[b.x,b.y]=drag.last;G.selected=null;}
   b.snapped=false;
-  if(!drag.changed)history.pop();
+  if(!drag.changed)G.history.pop();
   drag=null; loupe.hidden=true; svg.classList.remove("dragging"); render();
 }
 window.addEventListener("pointerup",endDrag);
@@ -506,12 +575,12 @@ document.addEventListener("keydown",e=>{
   const ae=document.activeElement; if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
   if(e.key==="Escape"&&document.body.classList.contains("sheet-open")){closeSheet();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undo();return;}
-  const b=selected&&byId(selected); if(!b||!b.on)return;
   if(ae&&ae.tagName==="BUTTON")return;
+  const b=G.selected&&byId(G.selected); if(!b||!b.on)return;
   const step=e.shiftKey?10:1; let sx=0,sy=0;
   if(e.key==="ArrowLeft")sx=-1; else if(e.key==="ArrowRight")sx=1; else if(e.key==="ArrowUp")sy=-1; else if(e.key==="ArrowDown")sy=1;
-  else if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();pushHistory();b.on=false;selected=null;render();return;}
-  else if(e.key==="Escape"){selected=null;render();return;}
+  else if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();pushHistory();b.on=false;G.selected=null;render();return;}
+  else if(e.key==="Escape"){G.selected=null;render();return;}
   else return;
   e.preventDefault();
   let dx,dy; if(isPortrait()){dx=-sy*step;dy=sx*step;}else{dx=sx*step;dy=sy*step;}
@@ -519,48 +588,40 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ---------- respotting ---------- */
+const free=(b,p)=>!overlaps(p[0],p[1],b);
 function freeNear(b,x,y,dir){
-  for(let s=0;s<L;s+=1){
+  for(let s=0;s<G.L;s+=1){
     for(const sign of (dir?[dir]:[1,-1])){
-      const nx=x+sign*s; if(nx<R||nx>L-R)continue;
-      if(!overlaps(nx,y,b.id))return [nx,y];
+      const nx=x+sign*s; if(nx<b.r||nx>G.L-b.r)continue;
+      if(!overlaps(nx,y,b))return [nx,y];
     }
   }
   return null;
 }
 function returnToTable(b){
-  let p=null;
-  if(b.type==="red"){
-    const cx=SPOTS.pink[0]+140, cy=MIDY;
-    outer: for(let rad=0;rad<1600;rad+=6){for(let a=0;a<360;a+=10){
-      const x=clampX(cx+rad*Math.cos(a*Math.PI/180)), y=clampY(cy+rad*Math.sin(a*Math.PI/180));
-      if(!overlaps(x,y,b.id)){p=[x,y];break outer;} if(rad===0)break;}}
-  }else if(b.type==="white"){
-    p=freeNear(b,BAULK-12,MIDY+DR*0.55,-1);
-  }else{
-    const own=SPOTS[b.type];
-    if(!overlaps(own[0],own[1],b.id))p=own.slice();
-    else{
-      for(const k of ["black","pink","blue","brown","green","yellow"]){const s=SPOTS[k];if(!overlaps(s[0],s[1],b.id)){p=s.slice();break;}}
-      if(!p)p=freeNear(b,own[0],own[1],1)||freeNear(b,own[0],own[1],-1);
-    }
+  let p=G.respotTarget(b,free,freeNear);
+  if(!p){ // nearest free point to the pack area, spiralling out
+    const [cx,cy]=G.packPoint;
+    outer: for(let rad=0;rad<G.L;rad+=4){for(let a=0;a<360;a+=10){
+      const x=clampX(cx+rad*Math.cos(a*Math.PI/180),b.r), y=clampY(cy+rad*Math.sin(a*Math.PI/180),b.r);
+      if(!overlaps(x,y,b)){p=[x,y];break outer;} if(rad===0)break;}}
   }
   if(!p)return;
-  pushHistory(); b.x=p[0]; b.y=p[1]; b.on=true; selected=b.id; render();
+  pushHistory(); b.x=p[0]; b.y=p[1]; b.on=true; G.selected=b.id; render();
 }
 
 /* ---------- tray ---------- */
 const tray=document.getElementById("tray");
-const rank=b=>b.type==="red"?0:1+ORDER.indexOf(b.type);
 function renderTray(){
-  const off=balls.filter(b=>!b.on).sort((a,b)=>rank(a)-rank(b));
+  const rank=b=>G.rankOrder.indexOf(b.type);
+  const off=G.balls.filter(b=>!b.on).sort((a,b)=>rank(a)-rank(b));
   tray.textContent="";
   tray.parentElement.classList.toggle("none",!off.length);
   if(!off.length){const s=document.createElement("span");s.className="empty";s.textContent="No balls off the table";tray.appendChild(s);return;}
   off.forEach(b=>{
-    const c=COLOURS[b.type].c;
+    const c=G.colours[b.type].c;
     const btn=document.createElement("button");
-    btn.type="button";btn.className="chip";btn.setAttribute("aria-label","Put "+COLOURS[b.type].name.toLowerCase()+" back");
+    btn.type="button";btn.className="chip";btn.setAttribute("aria-label","Put "+G.colours[b.type].name.toLowerCase()+" back");
     btn.style.background=`radial-gradient(circle at 36% 34%, ${shade(c,.5)}, ${c} 55%, ${shade(c,-.45)})`;
     btn.addEventListener("pointerdown",e=>{
       e.preventDefault();
@@ -569,9 +630,9 @@ function renderTray(){
         if(ev.pointerId!==pid||Math.hypot(ev.clientX-sx,ev.clientY-sy)<8)return;
         cleanup();
         const [x,y]=toTable(ev.clientX,ev.clientY);
-        b.on=true; b.x=clampX(x); b.y=clampY(y);
+        b.on=true; b.x=clampX(x,b.r); b.y=clampY(y,b.r);
         startDrag(b,ev,"abs",[0,0]);
-        history[history.length-1].forEach(o=>{if(o.id===b.id)o.on=false;});
+        G.history[G.history.length-1].forEach(o=>{if(o.id===b.id)o.on=false;});
         drag.changed=true; moveDrag(ev);
       };
       const up=ev=>{if(ev.pointerId!==pid)return;cleanup();returnToTable(b);};
@@ -587,29 +648,31 @@ function renderTray(){
 const statusEl=document.getElementById("status");
 const fmt=n=>Math.round(n).toLocaleString("en-GB");
 function contact(b){
-  for(const k in SPOTS){const s=SPOTS[k];if(Math.hypot(b.x-s[0],b.y-s[1])<0.5)return "On "+k+" spot";}
-  const touching=balls.filter(o=>o.on&&o.id!==b.id&&Math.hypot(o.x-b.x,o.y-b.y)-2*R<0.5);
+  for(const k in G.spots){const s=G.spots[k];if(Math.hypot(b.x-s[0],b.y-s[1])<0.5)return "On "+k+" spot";}
+  const touching=G.balls.filter(o=>o.on&&o.id!==b.id&&Math.hypot(o.x-b.x,o.y-b.y)-o.r-b.r<0.5);
   if(touching.length){const names=[...new Set(touching.map(o=>o.type==="white"?"cue ball":o.type))];return "Touching "+names.join(" and ");}
-  const gap=Math.min(b.x-R,L-R-b.x,b.y-R,W-R-b.y);
+  const gap=Math.min(b.x-b.r,G.L-b.r-b.x,b.y-b.r,G.W-b.r-b.y);
   return gap<0.5?"Touching cushion":"Cushion gap "+fmt(gap)+" mm";
 }
 function renderStatus(){
-  const b=selected&&byId(selected);
+  const b=G.selected&&byId(G.selected);
   if(!b||!b.on){
-    const reds=balls.filter(x=>x.on&&x.type==="red").length, cols=balls.filter(x=>x.on&&x.type!=="red"&&x.type!=="white").length;
-    statusEl.innerHTML=`<span>${reds} red${reds===1?"":"s"}, ${cols} colour${cols===1?"":"s"} on the table</span><span class="dim">Drag a ball to move it, or off the table to pot it</span>`;
+    statusEl.innerHTML=`<span>${G.summary(G.balls)}</span><span class="dim">Drag a ball to move it, or off the table to pot it</span>`;
     return;
   }
-  const name=b.type==="red"?"Red":COLOURS[b.type].name;
-  statusEl.innerHTML=`<b>${name}</b><span><span class="dim">From baulk</span> ${fmt(b.x)} mm</span><span><span class="dim">From left</span> ${fmt(b.y)} mm</span><span class="tag">${contact(b)}</span>`;
+  statusEl.innerHTML=`<b>${G.colours[b.type].name}</b><span><span class="dim">From baulk</span> ${fmt(b.x)} mm</span><span><span class="dim">From left</span> ${fmt(b.y)} mm</span><span class="tag">${contact(b)}</span>`;
 }
 
 /* ---------- controls ---------- */
 const undoBtn=document.getElementById("undo");
-function undo(){if(!history.length)return;restore(history.pop());selected=null;render();}
+function undo(){if(!G.history.length)return;restore(G.history.pop());G.selected=null;render();}
 undoBtn.addEventListener("click",undo);
-document.getElementById("reset").addEventListener("click",()=>{pushHistory();const fresh=breakOff();fresh.forEach(f=>{const b=byId(f.id);b.x=f.x;b.y=f.y;b.on=true;});selected=null;render();});
-document.getElementById("noreds").addEventListener("click",()=>{if(!balls.some(b=>b.on&&b.type==="red"))return;pushHistory();balls.forEach(b=>{if(b.type==="red")b.on=false;});if(selected&&byId(selected).type==="red")selected=null;render();closeSheet();});
+document.getElementById("reset").addEventListener("click",()=>{pushHistory();G.breakOff().forEach(f=>{const b=byId(f.id);b.x=f.x;b.y=f.y;b.on=true;});G.selected=null;render();});
+const clearBtn=document.getElementById("clearballs");
+clearBtn.addEventListener("click",()=>{
+  if(!G.balls.some(b=>b.on&&G.clearTypes.includes(b.type)))return;
+  pushHistory();G.balls.forEach(b=>{if(G.clearTypes.includes(b.type))b.on=false;});
+  const s=G.selected&&byId(G.selected); if(s&&!s.on)G.selected=null; render();closeSheet();});
 document.getElementById("rotate").addEventListener("click",()=>{portraitOverride=!isPortrait();applyOrientation();closeSheet();});
 const snapBtn=document.getElementById("snap");
 snapBtn.addEventListener("click",()=>{snapOn=!snapOn;snapBtn.setAttribute("aria-pressed",String(snapOn));snapBtn.textContent=snapOn?"Snap on":"Snap off";});
@@ -623,33 +686,38 @@ document.getElementById("closemore").addEventListener("click",()=>{closeSheet();
 document.getElementById("scrim").addEventListener("click",closeSheet);
 
 /* ---------- sharing ----------
-   Layout code: "s1" + base64url of 3 bytes per ball (fixed order):
-   12-bit x and 12-bit y in whole mm; x = 4095 means the ball is off the table. */
-const FIXED_ORDER=breakOff().map(b=>b.id);
-function encodeLayout(){
-  const bytes=[];
-  FIXED_ORDER.forEach(id=>{const b=byId(id);
-    const x=b.on?Math.round(b.x):4095, y=b.on?Math.round(b.y):0;
-    bytes.push(x>>4,((x&15)<<4)|(y>>8),y&255);});
-  return "s1"+btoa(String.fromCharCode.apply(null,bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-}
-function decodeLayout(code){
-  const m=/(?:^|#)(s1[A-Za-z0-9_-]+)\s*$/.exec(String(code).trim()); if(!m)return null;
-  let s=m[1].slice(2).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4)s+="=";
-  let raw; try{raw=atob(s);}catch(e){return null;}
-  if(raw.length!==FIXED_ORDER.length*3)return null;
-  return FIXED_ORDER.map((id,i)=>{
-    const a=raw.charCodeAt(i*3),b=raw.charCodeAt(i*3+1),c=raw.charCodeAt(i*3+2);
-    const x=(a<<4)|(b>>4), y=((b&15)<<8)|c;
-    return x===4095?{id,x:0,y:0,on:false}:{id,x:clampX(x),y:clampY(y),on:true};
-  });
-}
-function applyLayout(layout,record){if(record)pushHistory();restore(layout.map(o=>o.on?o:Object.assign({},o,byId(o.id),{on:false})));selected=null;render();}
-
-let embedded=false; try{embedded=window.self!==window.top;}catch(e){embedded=true;}
+   Layout code: game prefix ("s1" snooker, "p1" pool) + base64url of 3 bytes per ball, in a
+   fixed order: 12-bit x and 12-bit y in whole mm; x = 4095 means the ball is off the table. */
 const sharebox=document.getElementById("sharebox"), shareBtn=document.getElementById("share");
 const shareInput=document.getElementById("sharelink"), shareMsg=document.getElementById("sharemsg");
+let embedded=false; try{embedded=window.self!==window.top;}catch(e){embedded=true;}
 const canLink=!embedded&&/^https?:$/.test(location.protocol);
+function encodeLayout(){
+  const bytes=[];
+  G.order.forEach(id=>{const b=byId(id);
+    const x=b.on?Math.round(b.x):4095, y=b.on?Math.round(b.y):0;
+    bytes.push(x>>4,((x&15)<<4)|(y>>8),y&255);});
+  return G.prefix+btoa(String.fromCharCode.apply(null,bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function decodeLayout(code){
+  const m=/(?:^|#)((s1|p1)[A-Za-z0-9_-]+)\s*$/.exec(String(code).trim()); if(!m)return null;
+  const game=m[2]==="p1"?POOL:SNOOKER;
+  let s=m[1].slice(2).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4)s+="=";
+  let raw; try{raw=atob(s);}catch(e){return null;}
+  if(raw.length!==game.order.length*3)return null;
+  const layout=game.order.map((id,i)=>{
+    const a=raw.charCodeAt(i*3),b=raw.charCodeAt(i*3+1),c=raw.charCodeAt(i*3+2);
+    const x=(a<<4)|(b>>4), y=((b&15)<<8)|c, r=game.balls.find(q=>q.id===id).r;
+    return x===4095?{id,on:false}:{id,x:Math.max(r,Math.min(game.L-r,x)),y:Math.max(r,Math.min(game.W-r,y)),on:true};
+  });
+  return {game:game.key,layout};
+}
+function applyLayout(res,record){
+  if(G.key!==res.game)setGame(res.game);
+  if(record)pushHistory();
+  res.layout.forEach(o=>{const b=byId(o.id);b.on=o.on;if(o.on){b.x=o.x;b.y=o.y;}b.removing=false;});
+  G.selected=null;render();
+}
 function refreshShare(){
   const code=encodeLayout();
   if(canLink){shareInput.value=location.href.split("#")[0]+"#"+code;}
@@ -667,18 +735,44 @@ document.getElementById("copylink").addEventListener("click",()=>{
   try{navigator.clipboard.writeText(shareInput.value).then(done,fallback);}catch(e){fallback();}
 });
 document.getElementById("loadcode").addEventListener("click",()=>{
-  const layout=decodeLayout(document.getElementById("pastecode").value);
-  if(!layout){shareMsg.textContent="That code wasn't recognised. Check it was copied in full; it starts with s1.";return;}
-  applyLayout(layout,true); refreshShare(); shareMsg.textContent="Layout loaded.";
+  const res=decodeLayout(document.getElementById("pastecode").value);
+  if(!res){shareMsg.textContent="That code wasn't recognised. Check it was copied in full; it starts with s1 or p1.";return;}
+  applyLayout(res,true); refreshShare(); shareMsg.textContent="Layout loaded.";
 });
-window.addEventListener("hashchange",()=>{const l=decodeLayout(location.hash);if(l){applyLayout(l,true);if(!sharebox.hidden)refreshShare();}});
-var afterRender=function(){if(!sharebox.hidden&&!drag)refreshShare();};
 
-balls=breakOff();
-applyOrientation();
-render();
-// A shared link opens on its layout; otherwise the table starts at the break-off.
-{const l=decodeLayout(location.hash); if(l)applyLayout(l,false);}
+/* ---------- game tabs ---------- */
+const tabs=[...document.querySelectorAll('[role="tab"]')];
+function setGame(key,focusTab){
+  if(drag)return;
+  G=GAMES[key]||SNOOKER;
+  for(const g of Object.values(GAMES))g.world.style.display=g===G?"":"none";
+  tabs.forEach(t=>{const on=t.dataset.game===G.key;t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1;if(on&&focusTab)t.focus();});
+  stage.setAttribute("aria-labelledby","tab-"+G.key);
+  svg.setAttribute("aria-label",(G.key==="pool"?"English pool":"Snooker")+" table, top-down view");
+  loupeUse.setAttribute("href","#world-"+G.key);
+  clearBtn.textContent=G.clearLabel;
+  document.getElementById("specs-snooker").hidden=G.key!=="snooker";
+  document.getElementById("specs-pool").hidden=G.key!=="pool";
+  applyOrientation(); render();
+}
+tabs.forEach(t=>{
+  t.addEventListener("click",()=>setGame(t.dataset.game));
+  t.addEventListener("keydown",e=>{
+    if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;
+    e.preventDefault(); const i=tabs.indexOf(t), n=tabs[(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length];
+    setGame(n.dataset.game,true);
+  });
+});
+function fromHash(record){
+  const h=location.hash.slice(1);
+  if(h==="pool"||h==="snooker"){setGame(h);return;}
+  const res=decodeLayout(location.hash); if(res)applyLayout(res,record);
+}
+window.addEventListener("hashchange",()=>fromHash(true));
+
+// Start on snooker at the break-off. A link ending #pool opens the pool table; a shared code opens its position.
+setGame("snooker");
+fromHash(false);
 })();
 </script>
 </body>
